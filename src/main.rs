@@ -1,53 +1,47 @@
+mod models;
+mod response_types;
+
 use dotenv::dotenv;
-use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, CONTENT_TYPE};
-use serde_json::json;
+use models::{claude::Claude, gpt::GPT, AIModel};
+use response_types::{command::Command, short::Short, ResponseModifier};
 use std::env;
 
 #[tokio::main]
-async fn main() -> Result <(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
-
     let args: Vec<String> = env::args().collect();
-    if args.len() != 2 {
-        eprintln!("Usage: {} \"your message in quotes\"", args[0]);
+    if args.len() < 4 {
+        eprintln!(
+            "Usage: {} <-cl|-gpt> <-s|-c> \"your question in quotes\"",
+            args[0]
+        );
         std::process::exit(1);
     }
 
-    let question = &args[1];
-    let api_key = env::var("ANTHROPIC_API_KEY").expect("ANTHROPIC_API_KEY must be set");
+    let model: Box<dyn AIModel> = match args[1].as_str() {
+        "-cl" => Box::new(Claude),
+        "-gpt" => Box::new(GPT),
+        _ => {
+            eprintln!("Invalid model specified. Use -cl for Claude or -gpt for GPT.");
+            std::process::exit(1);
+        }
+    };
 
-    let client = reqwest::Client::new();
-    let mut headers = HeaderMap::new();
-    headers.insert(AUTHORIZATION, HeaderValue::from_str(&format!("Bearer {}", api_key))?);
-    headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+    let response_modifier: Box<dyn ResponseModifier> = match args[2].as_str() {
+        "-s" => Box::new(Short),
+        "-c" => Box::new(Command),
+        _ => {
+            eprintln!("Invalid response type specified. Use -s for short or -c for command.");
+            std::process::exit(1);
+        }
+    };
 
-    let body = json!({
-        "model": "claude-3-sonnet-20240229",
-        "max_tokens": 1000, 
-        "messages": [
-         {   "role": "user",
-            "content": question}
-        ]
-    });
+    let original_prompt = &args[3];
+    let modified_prompt = response_modifier.modify_prompt(original_prompt);
 
-    let response = client.post("https://api.anthropic.com/v1/messages")
-        .headers(headers)
-        .json(&body)
-        .send()
-        .await?;
-
-    println!("Status: {}", response.status());
-
-    let response_text = response.text().await?;
-    println!("Response text: {}", response_text);
-
-    let response_body: serde_json::Value = serde_json::from_str(&response_text)?;
-
-    if let Some(content) = response_body["content"][0]["text"].as_str() {
-        println!("Claude's response:\n{}", content);
-    } else {
-        eprintln!("Failed to parse Claude's response");
-        println!("Response structure: {:?}", response_body);
+    match model.generate_response(&modified_prompt).await {
+        Ok(response) => println!("AI response:\n{}", response),
+        Err(e) => eprintln!("Error: {}", e),
     }
 
     Ok(())
