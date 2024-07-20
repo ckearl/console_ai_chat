@@ -40,15 +40,11 @@ impl AIModel for Claude {
             .send()
             .await?;
 
-        println!("Status: {}", response.status());
-
         let response_text = response.text().await?;
-        println!("Response body: {}", response_text);
 
         let response_body: serde_json::Value = serde_json::from_str(&response_text)?;
 
         if let Some(content) = response_body["content"][0]["text"].as_str() {
-            println!("Claude response: {}", content);
             Ok(content.to_string())
         } else {
             println!("Response structure: {:?}", response_text);

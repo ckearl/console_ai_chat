@@ -40,15 +40,11 @@ impl AIModel for GPT {
             .send()
             .await?;
 
-        println!("Status: {}", response.status());
-        
         let response_text = response.text().await?;
-        println!("Response body: {}", response_text);
 
         let response_body: serde_json::Value = serde_json::from_str(&response_text)?;
         
         if let Some(content) = response_body["choices"][0]["message"]["content"].as_str() {
-            println!("GPT response: {}", content);
             Ok(content.to_string())
         } else {
             println!("Response structure: {:?}", response_text);
