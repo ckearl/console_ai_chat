@@ -5,6 +5,7 @@ use dotenv::dotenv;
 use models::{claude::Claude, gpt::GPT, AIModel};
 use response_types::{command::Command, short::Short, ResponseModifier};
 use std::env;
+use ansi_term::Colour;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -45,8 +46,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         original_prompt.to_string()
     };
 
+    let header_text = Colour::Green.bold().paint("AI response:");
+    
     match model.generate_response(&modified_prompt).await {
-        Ok(response) => println!("AI response:\n{}", response),
+        Ok(response) => println!("{}\n{}", header_text, response),
         Err(e) => eprintln!("Error: {}", e),
     }
 
