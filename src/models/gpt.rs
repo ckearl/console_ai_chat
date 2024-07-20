@@ -23,6 +23,10 @@ impl AIModel for GPT {
             "model": "gpt-3.5-turbo",
             "messages": [
                 {
+                    "role": "system",
+                    "content": "You are a helpful assistant."
+                },
+                {
                     "role": "user",
                     "content": prompt
                 }
@@ -36,11 +40,18 @@ impl AIModel for GPT {
             .send()
             .await?;
 
-        let response_body: serde_json::Value = response.json().await?;
+        println!("Status: {}", response.status());
+        
+        let response_text = response.text().await?;
+        println!("Response body: {}", response_text);
+
+        let response_body: serde_json::Value = serde_json::from_str(&response_text)?;
         
         if let Some(content) = response_body["choices"][0]["message"]["content"].as_str() {
+            println!("GPT response: {}", content);
             Ok(content.to_string())
         } else {
+            println!("Response structure: {:?}", response_text);
             Err("Failed to parse GPT's response".into())
         }
     }
