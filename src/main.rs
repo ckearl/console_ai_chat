@@ -10,9 +10,10 @@ use std::env;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
     let args: Vec<String> = env::args().collect();
-    if args.len() < 4 {
+    
+    if args.len() < 3 {
         eprintln!(
-            "Usage: {} <-cl|-gpt> <-s|-c> \"your question in quotes\"",
+            "Usage: {} <-cl|-gpt> [-s|-c] \"your question in quotes\"",
             args[0]
         );
         std::process::exit(1);
@@ -27,17 +28,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     };
 
-    let response_modifier: Box<dyn ResponseModifier> = match args[2].as_str() {
-        "-s" => Box::new(Short),
-        "-c" => Box::new(Command),
-        _ => {
-            eprintln!("Invalid response type specified. Use -s for short or -c for command.");
-            std::process::exit(1);
+    let (response_modifier, prompt_index) = if args.len() >= 4 {
+        match args[2].as_str() {
+            "-s" => (Some(Box::new(Short) as Box<dyn ResponseModifier>), 3),
+            "-c" => (Some(Box::new(Command) as Box<dyn ResponseModifier>), 3),
+            _ => (None, 2),
         }
+    } else {
+        (None, 2)
     };
 
-    let original_prompt = &args[3];
-    let modified_prompt = response_modifier.modify_prompt(original_prompt);
+    let original_prompt = &args[prompt_index];
+    let modified_prompt = if let Some(modifier) = response_modifier {
+        modifier.modify_prompt(original_prompt)
+    } else {
+        original_prompt.to_string()
+    };
 
     match model.generate_response(&modified_prompt).await {
         Ok(response) => println!("AI response:\n{}", response),
