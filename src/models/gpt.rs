@@ -11,12 +11,16 @@ pub struct GPT;
 #[async_trait]
 impl AIModel for GPT {
     async fn generate_response(&self, prompt: &str) -> Result<String, Box<dyn std::error::Error>> {
-        dotenv::dotenv().ok(); // Try to load .env file
-        let api_key = env::var("OPENAI_API_KEY").map_err(|_| "OPENAI_API_KEY not set. Please check your .env file.")?;
+        dotenv::dotenv().ok();
+        let api_key = env::var("OPENAI_API_KEY")
+            .map_err(|_| "OPENAI_API_KEY not set. Please check your .env file.")?;
 
         let client = reqwest::Client::new();
         let mut headers = HeaderMap::new();
-        headers.insert(AUTHORIZATION, HeaderValue::from_str(&format!("Bearer {}", api_key))?);
+        headers.insert(
+            AUTHORIZATION,
+            HeaderValue::from_str(&format!("Bearer {}", api_key))?,
+        );
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
 
         let body = json!({
@@ -34,7 +38,8 @@ impl AIModel for GPT {
             "max_tokens": 1000
         });
 
-        let response = client.post("https://api.openai.com/v1/chat/completions")
+        let response = client
+            .post("https://api.openai.com/v1/chat/completions")
             .headers(headers)
             .json(&body)
             .send()
@@ -43,7 +48,7 @@ impl AIModel for GPT {
         let response_text = response.text().await?;
 
         let response_body: serde_json::Value = serde_json::from_str(&response_text)?;
-        
+
         if let Some(content) = response_body["choices"][0]["message"]["content"].as_str() {
             Ok(content.to_string())
         } else {

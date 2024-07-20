@@ -1,17 +1,17 @@
 mod models;
 mod response_types;
 
+use ansi_term::Colour;
 use dotenv::dotenv;
 use models::{claude::Claude, gpt::GPT, AIModel};
 use response_types::{command::Command, short::Short, ResponseModifier};
 use std::env;
-use ansi_term::Colour;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
     let args: Vec<String> = env::args().collect();
-    
+
     if args.len() < 3 {
         eprintln!(
             "Usage: {} <-cl|-gpt> [-s|-c] \"your question in quotes\"",
@@ -47,7 +47,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let header_text = Colour::Green.bold().paint("AI response:");
-    
+
     match model.generate_response(&modified_prompt).await {
         Ok(response) => println!("{}\n{}", header_text, response),
         Err(e) => eprintln!("Error: {}", e),
