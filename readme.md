@@ -28,10 +28,11 @@ cargo run -- -platform -prompting-styling "What ever you want to ask"
 ## Breakdown
 
 The command has two flags that you can use:
-    - 1. The first flag (noted with `-platform` above) determines what AI you want to use. With the options being either chat-GPT or Claude.ai, you can call chat-GPT with the `-gpt` or Claude with `-cl`.
-    - 2. The second flag (noted with `-prompting-styling` above) is a prompt modying flag. This flag is used to alter the style of response that the AI will return. The options are:
-        - `s`: Meaning "short," this flag will limit the response to one paragraph or less.
-        - `c`: Meaning "command," this flag will return an ordered list of steps to complete a specific task. This is especially useful for technical questions, such as "How do init a git repository?"
-        - _ (No flag): If you don't include a flag, the AI will return a response in the default style.
+
+1. The first flag (noted with `-platform` above) determines what AI you want to use. With the options being either chat-GPT or Claude.ai, you can call chat-GPT with the `-gpt` or Claude with `-cl`.
+2. The second flag (noted with `-prompting-styling` above) is a prompt modying flag. This flag is used to alter the style of response that the AI will return. The options are:
+    - `s`: Meaning "short," this flag will limit the response to one paragraph or less.
+    - `c`: Meaning "command," this flag will return an ordered list of steps to complete a specific task. This is especially useful for technical questions, such as "How do init a git repository?"
+    - _ (No flag): If you don't include a flag, the AI will return a response in the default style.
 
 Make sure to include the flags in the order shown above and your prompt body should be in quotes.
