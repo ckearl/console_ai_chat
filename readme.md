@@ -25,6 +25,18 @@ To run the program you just need to run the .toml file through cargo.
 cargo run -- -platform -prompting-styling "What ever you want to ask"
 ```
 
+Running it exactly like this will give you some lines in your terminal that include information about the building and execution of the program. This information is built into how Rust compiles and runs programs. If you want to avoid this, be sure to add the `--quiet` flag to the command.
+
+You can run the executable to execute the file regardless of what directory you are in on your command line by addressing the path to the executable in the command. The path should be defined after the `--manifest-path` flag, and best practice is to use the absolute path to the executable.
+
+[!TIP] Writing out this whole command every time you call it is quite a bit of typing. You can make your life easier by creating a command alias in your shell That drastically shortens the length of the command. For example, in bash you can add the following line to your `.bashrc` or `.bash_profile` file:
+
+```bash
+alias chat="cargo run --quiet --manifest-path ~/path/to/the/executable/Cargo.toml"
+```
+
+And you can call the program now by just typing `chat` in your terminal.
+
 ## Breakdown
 
 The command has two flags that you can use:
