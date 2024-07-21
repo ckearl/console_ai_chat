@@ -14,20 +14,30 @@ pub fn format_response(response: &str, is_command_mode: bool) -> String {
 fn color_ordered_list(text: &str) -> String {
     let re = Regex::new(r"(?m)^\s*(\d+)\.\s").unwrap();
     re.replace_all(text, |caps: &regex::Captures| {
-        format!("{}. ", Colour::Cyan.bold().paint(&caps[1]))
+        format!("{}. ", color_text(&caps[1], "cyan"))
     }).to_string()
 }
 
 pub fn create_header() -> String {
-    Colour::Green.bold().paint("AI response:").to_string()
+    color_text("AI response:", "green")
 }
 
 pub fn format_error(error: &str) -> String {
-    Colour::Red.bold().paint(format!("Error: {}", error)).to_string()
+    color_text(&format!("Error: {}", error), "red")
 }
 
 pub fn print_formatted_response(response: &str, is_command_mode: bool) {
     let header = create_header();
     let formatted_response = format_response(response, is_command_mode);
-    println!("{}\n{}", header, formatted_response);
+    println!("\n{}\n{}", header, formatted_response);
+}
+
+pub fn color_text(text: &str, color: &str) -> String {
+    match color {
+        "red" => Colour::Red.bold().paint(text).to_string(),
+        "green" => Colour::Green.bold().paint(text).to_string(),
+        "yellow" => Colour::Yellow.bold().paint(text).to_string(),
+        "cyan" => Colour::Cyan.bold().paint(text).to_string(),
+        _ => text.to_string(),
+    }
 }

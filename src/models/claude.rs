@@ -11,7 +11,7 @@ pub struct Claude;
 
 #[async_trait]
 impl AIModel for Claude {
-    async fn generate_response(&self, prompt: &str) -> Result<String, Box<dyn std::error::Error>> {
+    async fn generate_response(&mut self, prompt: &str) -> Result<String, Box<dyn std::error::Error>> {
         dotenv().ok();
         let api_key = env::var("ANTHROPIC_API_KEY")
             .map_err(|_| "ANTHROPIC_API_KEY not set. Please check your .env file.")?;
