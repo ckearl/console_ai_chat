@@ -1,10 +1,11 @@
 mod models;
 mod response_types;
+mod text_formatter;
 
-use ansi_term::Colour;
 use dotenv::dotenv;
 use models::{claude::Claude, gpt::GPT, AIModel};
 use response_types::{command::Command, short::Short, ResponseModifier};
+use text_formatter::{print_formatted_response, format_error};
 use std::env;
 
 #[tokio::main]
@@ -46,11 +47,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         original_prompt.to_string()
     };
 
-    let header_text = Colour::Green.bold().paint("AI response:");
-
+    let is_command_mode = args.len() >= 4 && args[2] == "-c";
+    
     match model.generate_response(&modified_prompt).await {
-        Ok(response) => println!("{}\n{}", header_text, response),
-        Err(e) => eprintln!("Error: {}", e),
+        Ok(response) => {
+            print_formatted_response(&response, is_command_mode);
+        },
+        Err(e) => eprintln!("{}", format_error(&e.to_string())),
     }
 
     Ok(())
