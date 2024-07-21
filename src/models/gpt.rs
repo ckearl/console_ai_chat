@@ -25,15 +25,18 @@ impl GPT {
 impl AIModel for GPT {
     async fn generate_response(&mut self, prompt: &str) -> Result<String, Box<dyn std::error::Error>> {
         dotenv::dotenv().ok();
+        
         let api_key = env::var("OPENAI_API_KEY")
             .map_err(|_| "OPENAI_API_KEY not set. Please check your .env file.")?;
 
         let client = reqwest::Client::new();
         let mut headers = HeaderMap::new();
+        
         headers.insert(
             AUTHORIZATION,
             HeaderValue::from_str(&format!("Bearer {}", api_key))?,
         );
+        
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
 
         self.conversation_history.push(json!({
