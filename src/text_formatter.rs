@@ -14,7 +14,7 @@ pub fn format_response(response: &str, is_command_mode: bool) -> String {
 fn color_ordered_list(text: &str) -> String {
     let re = Regex::new(r"(?m)^\s*(\d+)\.\s").unwrap();
     re.replace_all(text, |caps: &regex::Captures| {
-        format!("{}. ", Colour::Cyan.paint(&caps[1]))
+        format!("{}. ", Colour::Cyan.bold().paint(&caps[1]))
     }).to_string()
 }
 
