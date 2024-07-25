@@ -1,8 +1,9 @@
 // src/main.rs
 
-mod conversation;
 mod models;
+mod conversation;
 mod response_types;
+mod syntax_highlighter;
 mod text_formatter;
 
 use conversation::continue_conversation;
