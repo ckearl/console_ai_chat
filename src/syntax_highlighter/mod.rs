@@ -3,121 +3,133 @@
 pub mod language_factory;
 
 use crate::syntax_highlighter::language_factory::language_factory::get_language;
+use crate::syntax_highlighter::language_factory::language_def::LanguageDef;
 use std::collections::HashSet;
 
 pub fn highlight_code(language_name: &str, code: &str) -> String {
-    let language = get_language(language_name).expect("Language not found");
+    let language = match get_language(language_name) {
+        Some(lang) => lang,
+        None => panic!("Language not found"),
+    };
 
     let mut highlighted_code = String::new();
     let lines: Vec<&str> = code.lines().collect();
 
     for line in lines {
-        if line.trim().starts_with(language.comment_prefix()) {
-            highlighted_code.push_str(&color_token(line, "comment"));
+        let comment_prefix = language.comment_prefix();
+        let comment_start = line.find(comment_prefix);
+
+        if let Some(index) = comment_start {
+            let (code_part, comment_part) = line.split_at(index);
+            highlighted_code.push_str(&highlight_code_part(language_name, code_part, &language));
+            highlighted_code.push_str(&color_token(comment_part, "comment"));
             highlighted_code.push('\n');
-            continue;
+        } else {
+            highlighted_code.push_str(&highlight_code_part(language_name, line, &language));
+            highlighted_code.push('\n');
         }
-
-        let mut colored_line = String::new();
-        let mut in_string = false;
-        let mut string_start = ' ';
-        let mut current_token = String::new();
-
-        for ch in line.chars() {
-            if in_string {
-                current_token.push(ch);
-                if ch == string_start {
-                    colored_line.push_str(&color_token(&current_token, "string"));
-                    current_token.clear();
-                    in_string = false;
-                }
-            } else if language.string_delimiters().contains(&ch) {
-                if !current_token.is_empty() {
-                    colored_line.push_str(&color_token(
-                        &current_token,
-                        &categorize_token(
-                            &current_token,
-                            language.keywords(),
-                            language.operators(),
-                            language.built_ins(),
-                            language.literals(),
-                            language.types(),
-                            language.modifiers(),
-                            language.annotations(),
-                            language.preprocessor_directives(),
-                        ),
-                    ));
-                    current_token.clear();
-                }
-                current_token.push(ch);
-                in_string = true;
-                string_start = ch;
-            } else if ch.is_alphanumeric()
-                || ch == '_'
-                || (language_name == "javascript" && ch == '$')
-            {
-                current_token.push(ch);
-            } else {
-                if !current_token.is_empty() {
-                    colored_line.push_str(&color_token(
-                        &current_token,
-                        &categorize_token(
-                            &current_token,
-                            language.keywords(),
-                            language.operators(),
-                            language.built_ins(),
-                            language.literals(),
-                            language.types(),
-                            language.modifiers(),
-                            language.annotations(),
-                            language.preprocessor_directives(),
-                        ),
-                    ));
-                    current_token.clear();
-                }
-                if ch.is_whitespace() {
-                    colored_line.push(ch);
-                } else {
-                    colored_line.push_str(&color_token(
-                        &ch.to_string(),
-                        &categorize_token(
-                            &ch.to_string(),
-                            language.keywords(),
-                            language.operators(),
-                            language.built_ins(),
-                            language.literals(),
-                            language.types(),
-                            language.modifiers(),
-                            language.annotations(),
-                            language.preprocessor_directives(),
-                        ),
-                    ));
-                }
-            }
-        }
-
-        if !current_token.is_empty() {
-            colored_line.push_str(&color_token(
-                &current_token,
-                &categorize_token(
-                    &current_token,
-                    language.keywords(),
-                    language.operators(),
-                    language.built_ins(),
-                    language.literals(),
-                    language.types(),
-                    language.modifiers(),
-                    language.annotations(),
-                    language.preprocessor_directives(),
-                ),
-            ));
-        }
-
-        highlighted_code.push_str(&colored_line);
-        highlighted_code.push('\n');
     }
 
     highlighted_code
+}
+
+fn highlight_code_part(language_name: &str, code_part: &str, language: &Box<dyn LanguageDef>) -> String {
+    let mut colored_line = String::new();
+    let mut in_string = false;
+    let mut string_start = ' ';
+    let mut current_token = String::new();
+
+    for ch in code_part.chars() {
+        if in_string {
+            current_token.push(ch);
+            if ch == string_start {
+                colored_line.push_str(&color_token(&current_token, "string"));
+                current_token.clear();
+                in_string = false;
+            }
+        } else if language.string_delimiters().contains(&ch) {
+            if !current_token.is_empty() {
+                colored_line.push_str(&color_token(
+                    &current_token,
+                    &categorize_token(
+                        &current_token,
+                        language.keywords(),
+                        language.operators(),
+                        language.built_ins(),
+                        language.literals(),
+                        language.types(),
+                        language.modifiers(),
+                        language.annotations(),
+                        language.preprocessor_directives(),
+                    ),
+                ));
+                current_token.clear();
+            }
+            current_token.push(ch);
+            in_string = true;
+            string_start = ch;
+        } else if ch.is_alphanumeric()
+            || ch == '_'
+            || (language_name == "javascript" && ch == '$')
+        {
+            current_token.push(ch);
+        } else {
+            if !current_token.is_empty() {
+                colored_line.push_str(&color_token(
+                    &current_token,
+                    &categorize_token(
+                        &current_token,
+                        language.keywords(),
+                        language.operators(),
+                        language.built_ins(),
+                        language.literals(),
+                        language.types(),
+                        language.modifiers(),
+                        language.annotations(),
+                        language.preprocessor_directives(),
+                    ),
+                ));
+                current_token.clear();
+            }
+            if ch.is_whitespace() {
+                colored_line.push(ch);
+            } else {
+                colored_line.push_str(&color_token(
+                    &ch.to_string(),
+                    &categorize_token(
+                        &ch.to_string(),
+                        language.keywords(),
+                        language.operators(),
+                        language.built_ins(),
+                        language.literals(),
+                        language.types(),
+                        language.modifiers(),
+                        language.annotations(),
+                        language.preprocessor_directives(),
+                    ),
+                ));
+            }
+        }
+    }
+
+    if !current_token.is_empty() {
+        colored_line.push_str(&color_token(
+            &current_token,
+            &categorize_token(
+                &current_token,
+                language.keywords(),
+                language.operators(),
+                language.built_ins(),
+                language.literals(),
+                language.types(),
+                language.modifiers(),
+                language.annotations(),
+                language.preprocessor_directives(),
+            ),
+        ));
+    }
+
+    colored_line
 }
 
 fn categorize_token(
