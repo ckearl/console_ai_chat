@@ -55,7 +55,7 @@ lazy_static! {
             "console", "Math", "Date", "Array", "Object", "String", "Number", "Boolean", "RegExp",
             "JSON", "Promise", "Set", "Map", "WeakSet", "WeakMap", "Symbol", "Proxy", "Reflect",
             "fetch", "log", "error", "warn", "info", "debug", "dir", "dirxml", "table", "trace",
-            "group", "signal", "abort",
+            "group", "signal", "abort", "race", "all", "resolve", "reject", "json"
         ];
         built_ins.iter().cloned().collect()
     };
