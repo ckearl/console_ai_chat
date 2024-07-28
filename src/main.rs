@@ -14,6 +14,8 @@ use std::env;
 use std::io::{self};
 use text_formatter::{color_text, format_error, print_formatted_response};
 
+
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();

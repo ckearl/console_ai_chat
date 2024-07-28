@@ -1,4 +1,4 @@
-use crate::language_factory::language_def::LanguageDef;
+use crate::syntax_highlighter::language_def::LanguageDef;
 use lazy_static::lazy_static;
 use std::collections::HashSet;
 

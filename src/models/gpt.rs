@@ -65,14 +65,15 @@ impl AIModel for GPT {
         let response_body: serde_json::Value = serde_json::from_str(&response_text)?;
 
         if let Some(content) = response_body["choices"][0]["message"]["content"].as_str() {
-            let highlighted_content = syntax_highlighter::highlight_code_blocks(content);
-
             self.conversation_history.push(json!({
                 "role": "assistant",
                 "content": content
             }));
 
-            Ok(highlighted_content)
+            // convert to string
+            let content = content.to_string();
+
+            Ok(content)
         } else {
             println!("Response structure: {:?}", response_text);
             Err("Failed to parse GPT's response".into())
