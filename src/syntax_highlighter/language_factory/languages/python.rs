@@ -19,7 +19,7 @@ lazy_static! {
         ];
         built_ins.into_iter().collect()
     };
-    
+
     // prettier-ignore
     static ref KEYWORDS: HashSet<&'static str> = {
         let keywords = vec![
@@ -30,7 +30,7 @@ lazy_static! {
         ];
         keywords.into_iter().collect()
     };
-    
+
     static ref OPERATORS: HashSet<&'static str> = {
         let operators = vec![
             "+", "-", "*", "**", "/", "//", "%", "@", "<<", ">>", "&", "|", "^", "~", ":", "=",
@@ -39,7 +39,7 @@ lazy_static! {
         ];
         operators.into_iter().collect()
     };
-    
+
     static ref LITERALS: HashSet<&'static str> = {
         let literals = vec!["True", "False", "None"];
         literals.into_iter().collect()
@@ -53,19 +53,25 @@ lazy_static! {
         ];
         types.into_iter().collect()
     };
-    
+
     static ref MODIFIERS: HashSet<&'static str> = {
         let modifiers = vec!["global", "nonlocal"];
         modifiers.into_iter().collect()
     };
-    
+
     static ref ANNOTATIONS: HashSet<&'static str> = {
         let annotations = vec!["@staticmethod", "@classmethod", "@property"];
         annotations.into_iter().collect()
     };
-    
+
     static ref PREPROCESSOR_DIRECTIVES: HashSet<&'static str> = {
-        let preprocessor_directives = vec![];
+        let preprocessor_directives = vec![
+            "time", "threading", "os", "sys", "math", "random", "pandas", "numpy", 
+            "matplotlib", "seaborn", "scipy", "sklearn", "tensorflow", "keras", "torch", 
+            "cv2", "openai", "requests", "beautifulsoup4", "selenium", "flask", "django", 
+            "fastapi", "pyqt5", "tkinter", "pygame", "pyautogui", "pyperclip", "pywhatkit", 
+            "pyttsx3", "pyaudio", "pydub", "pytube", "pyqrcode", "pyzbar", "pytesseract"
+        ];
         preprocessor_directives.into_iter().collect()
     };
 

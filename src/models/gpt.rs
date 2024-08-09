@@ -1,7 +1,7 @@
 // src/models/gpt.rs
 
 use crate::models::AIModel;
-use crate::syntax_highlighter::highlight_code;
+use crate::syntax_highlighter::highlight_code_blocks;
 use async_trait::async_trait;
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, CONTENT_TYPE};
 use serde_json::json;
@@ -70,7 +70,7 @@ impl AIModel for GPT {
                 "content": content
             }));
 
-            // Check for code blocks and apply syntax highlighting
+            // Check for code blocks, apply syntax highlighting, and keyword highlighting for supplemental explanations
             let highlighted_content = highlight_code_blocks(content);
 
             Ok(highlighted_content)
@@ -79,40 +79,4 @@ impl AIModel for GPT {
             Err("Failed to parse GPT's response".into())
         }
     }
-}
-
-fn highlight_code_blocks(content: &str) -> String {
-    let mut highlighted_content = String::new();
-    let mut in_code_block = false;
-    let mut language_name = String::new();
-    let mut code_block = String::new();
-
-    for line in content.lines() {
-        if line.starts_with("```") {
-            if in_code_block {
-                // End of code block
-                highlighted_content.push_str(&highlight_code(&language_name, &code_block));
-                highlighted_content.push_str("\n```");
-                in_code_block = false;
-                code_block.clear();
-            } else {
-                // Start of code block
-                language_name = line.trim_start_matches("```").to_string();
-                in_code_block = true;
-            }
-        } else if in_code_block {
-            code_block.push_str(line);
-            code_block.push('\n');
-        } else {
-            highlighted_content.push_str(line);
-            highlighted_content.push('\n');
-        }
-    }
-
-    if in_code_block {
-        // Handle unclosed code block
-        highlighted_content.push_str(&highlight_code(&language_name, &code_block));
-    }
-
-    highlighted_content
 }
