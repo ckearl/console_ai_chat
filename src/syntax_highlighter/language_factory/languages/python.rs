@@ -5,81 +5,22 @@ use std::collections::HashSet;
 pub struct Python;
 
 lazy_static! {
+    // prettier-ignore
     static ref BUILT_INS: HashSet<&'static str> = {
         let built_ins = vec![
-            "abs",
-            "delattr",
-            "hash",
-            "memoryview",
-            "set",
-            "all",
-            "dict",
-            "help",
-            "min",
-            "setattr",
-            "any",
-            "dir",
-            "hex",
-            "next",
-            "slice",
-            "ascii",
-            "divmod",
-            "id",
-            "object",
-            "sorted",
-            "bin",
-            "enumerate",
-            "input",
-            "oct",
-            "staticmethod",
-            "bool",
-            "eval",
-            "int",
-            "open",
-            "str",
-            "breakpoint",
-            "exec",
-            "isinstance",
-            "ord",
-            "sum",
-            "bytearray",
-            "filter",
-            "issubclass",
-            "pow",
-            "super",
-            "bytes",
-            "float",
-            "iter",
-            "print",
-            "tuple",
-            "callable",
-            "format",
-            "len",
-            "property",
-            "type",
-            "chr",
-            "frozenset",
-            "list",
-            "range",
-            "vars",
-            "classmethod",
-            "getattr",
-            "locals",
-            "repr",
-            "zip",
-            "compile",
-            "globals",
-            "map",
-            "reversed",
-            "__import__",
-            "complex",
-            "hasattr",
-            "max",
-            "round",
-            "del",
+            "abs", "delattr", "hash", "memoryview", "set", "all", "dict", "help", "min",
+            "setattr", "any", "dir", "hex", "next", "slice", "ascii", "divmod", "id", "object",
+            "sorted", "bin", "enumerate", "input", "oct", "staticmethod", "bool", "eval", "int",
+            "open", "str", "breakpoint", "exec", "isinstance", "ord", "sum", "bytearray", "filter",
+            "issubclass", "pow", "super", "bytes", "float", "iter", "print", "tuple", "callable",
+            "format", "len", "property", "type", "chr", "frozenset", "list", "range", "vars",
+            "classmethod", "getattr", "locals", "repr", "zip", "compile", "globals", "map",
+            "reversed", "__import__", "complex", "hasattr", "max", "round", "del",
         ];
         built_ins.into_iter().collect()
     };
+    
+    // prettier-ignore
     static ref KEYWORDS: HashSet<&'static str> = {
         let keywords = vec![
             "False", "await", "else", "import", "pass", "None", "break", "except", "in", "raise",
@@ -89,6 +30,7 @@ lazy_static! {
         ];
         keywords.into_iter().collect()
     };
+    
     static ref OPERATORS: HashSet<&'static str> = {
         let operators = vec![
             "+", "-", "*", "**", "/", "//", "%", "@", "<<", ">>", "&", "|", "^", "~", ":", "=",
@@ -97,43 +39,41 @@ lazy_static! {
         ];
         operators.into_iter().collect()
     };
+    
     static ref LITERALS: HashSet<&'static str> = {
         let literals = vec!["True", "False", "None"];
         literals.into_iter().collect()
     };
+
+    // prettier-ignore
     static ref TYPES: HashSet<&'static str> = {
         let types = vec![
-            "int",
-            "float",
-            "bool",
-            "str",
-            "list",
-            "tuple",
-            "dict",
-            "set",
-            "frozenset",
-            "bytes",
-            "bytearray",
-            "complex",
+            "int", "float", "bool", "str", "list", "tuple", "dict",
+            "set", "frozenset", "bytes", "bytearray", "complex",
         ];
         types.into_iter().collect()
     };
+    
     static ref MODIFIERS: HashSet<&'static str> = {
         let modifiers = vec!["global", "nonlocal"];
         modifiers.into_iter().collect()
     };
+    
     static ref ANNOTATIONS: HashSet<&'static str> = {
         let annotations = vec!["@staticmethod", "@classmethod", "@property"];
         annotations.into_iter().collect()
     };
+    
     static ref PREPROCESSOR_DIRECTIVES: HashSet<&'static str> = {
         let preprocessor_directives = vec![];
         preprocessor_directives.into_iter().collect()
     };
-    static ref COMMENTS: HashSet<&'static str> = {
-        let comments = vec!["#", "'''", "'''"];
-        comments.into_iter().collect()
-    };
+
+    // unused for now but will be used for multi-line comments
+    // static ref COMMENTS: HashSet<&'static str> = {
+    //     let comments = vec!["#", "'''", "'''"];
+    //     comments.into_iter().collect()
+    // };
 }
 
 impl LanguageDef for Python {
@@ -169,9 +109,10 @@ impl LanguageDef for Python {
         &PREPROCESSOR_DIRECTIVES
     }
 
-    fn comments(&self) -> &'static HashSet<&'static str> {
-        &COMMENTS
-    }
+    // unused for now but will be used for multi-line comments
+    // fn comments(&self) -> &'static HashSet<&'static str> {
+    //     &COMMENTS
+    // }
 
     fn comment_prefix(&self) -> &'static str {
         "#"

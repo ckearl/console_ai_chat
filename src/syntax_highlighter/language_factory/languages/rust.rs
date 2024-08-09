@@ -14,6 +14,7 @@ lazy_static! {
         ];
         keywords.into_iter().collect()
     };
+    
     static ref OPERATORS: HashSet<&'static str> = {
         let operators = vec![
             "+", "-", "*", "/", "%", "&", "|", "^", "!", "=", "==", "!=", "<", ">", "<=", ">=",
@@ -22,48 +23,23 @@ lazy_static! {
         ];
         operators.into_iter().collect()
     };
+    
+    // prettier-ignore
     static ref BUILT_INS: HashSet<&'static str> = {
         let built_ins = vec![
-            "Copy",
-            "Send",
-            "Sized",
-            "Sync",
-            "Drop",
-            "Fn",
-            "FnMut",
-            "FnOnce",
-            "Box",
-            "ToOwned",
-            "Clone",
-            "PartialEq",
-            "PartialOrd",
-            "Eq",
-            "Ord",
-            "AsRef",
-            "AsMut",
-            "Into",
-            "From",
-            "Default",
-            "Iterator",
-            "Extend",
-            "IntoIterator",
-            "DoubleEndedIterator",
-            "ExactSizeIterator",
-            "Option",
-            "Result",
-            "Some",
-            "None",
-            "Ok",
-            "Err",
-            "String",
-            "Vec",
+            "Copy", "Send", "Sized", "Sync", "Drop", "Fn", "FnMut", "FnOnce", "Box", "ToOwned",
+            "Clone", "PartialEq", "PartialOrd", "Eq", "Ord", "AsRef", "AsMut", "Into", "From",
+            "Default", "Iterator", "Extend", "IntoIterator", "DoubleEndedIterator",
+            "ExactSizeIterator", "Option", "Result", "Some", "None", "Ok", "Err", "String", "Vec",
         ];
         built_ins.into_iter().collect()
     };
+    
     static ref LITERALS: HashSet<&'static str> = {
         let literals = vec!["true", "false"];
         literals.into_iter().collect()
     };
+    
     static ref TYPES: HashSet<&'static str> = {
         let types = vec![
             "u8", "u16", "u32", "u64", "u128", "i8", "i16", "i32", "i64", "i128", "f32", "f64",
@@ -71,22 +47,27 @@ lazy_static! {
         ];
         types.into_iter().collect()
     };
+    
     static ref MODIFIERS: HashSet<&'static str> = {
         let modifiers = vec!["mut", "ref"];
         modifiers.into_iter().collect()
     };
+    
     static ref ANNOTATIONS: HashSet<&'static str> = {
         let annotations = vec!["#[derive]", "#[allow]", "#[warn]", "#[deny]", "#[forbid]"];
         annotations.into_iter().collect()
     };
+    
     static ref PREPROCESSOR_DIRECTIVES: HashSet<&'static str> = {
         let preprocessor_directives = vec![];
         preprocessor_directives.into_iter().collect()
     };
-    static ref COMMENTS: HashSet<&'static str> = {
-        let comments = vec!["//", "/*", "*/"];
-        comments.into_iter().collect()
-    };
+
+    // unused for now but will be used for multi-line comments
+    // static ref COMMENTS: HashSet<&'static str> = {
+    //     let comments = vec!["//", "/*", "*/"];
+    //     comments.into_iter().collect()
+    // };
 }
 
 impl LanguageDef for Rust {
@@ -121,10 +102,10 @@ impl LanguageDef for Rust {
     fn preprocessor_directives(&self) -> &'static HashSet<&'static str> {
         &PREPROCESSOR_DIRECTIVES
     }
-
-    fn comments(&self) -> &'static HashSet<&'static str> {
-        &COMMENTS
-    }
+    // unused for now but will be used for multi-line comments
+    // fn comments(&self) -> &'static HashSet<&'static str> {
+    //     &COMMENTS
+    // }
 
     fn comment_prefix(&self) -> &'static str {
         "//"
