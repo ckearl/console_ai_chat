@@ -34,7 +34,7 @@ lazy_static! {
         let built_ins = vec![
             "print", "abs", "min", "max", "round", "floor", "ceil", "Int", "Double", "String", "Array", 
             "Dictionary", "Set", "Bool", "Optional", "Sequence", "Collection", "Comparable", "Equatable",
-            "Hashable", "Codable", "Decodable", "Encodable", "Error", "Iterator", "Result", "Never",
+            "Hashable", "Codable", "Decodable", "Encodable", "Error", "Iterator", "Result", "Never", "sleep"
         ];
         built_ins.into_iter().collect()
     };
