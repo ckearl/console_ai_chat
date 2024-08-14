@@ -13,16 +13,19 @@ pub fn highlight_code(language_name: &str, code: &str) -> String {
     let mut highlighted_code = String::new();
     let lines: Vec<&str> = code.lines().collect();
 
+    // Check if the line has a comment and highlight it separately
     for line in lines {
         let comment_prefix = language.comment_prefix();
         let comment_start = line.find(comment_prefix);
 
+        // If there's a comment, highlight the code part and the comment part separately. Ensures that comments are colored appropriately
         if let Some(index) = comment_start {
             let (code_part, comment_part) = line.split_at(index);
             highlighted_code.push_str(&highlight_code_part(language_name, code_part, &language));
             highlighted_code.push_str(&color_token(comment_part, "comment"));
             highlighted_code.push('\n');
         } else {
+            // If there's no comment, highlight the whole line
             highlighted_code.push_str(&highlight_code_part(language_name, line, &language));
             highlighted_code.push('\n');
         }
@@ -31,6 +34,7 @@ pub fn highlight_code(language_name: &str, code: &str) -> String {
     highlighted_code
 }
 
+// This function handles the highlighting of a single line or part of a line that isn't a comment
 fn highlight_code_part(
     language_name: &str,
     code_part: &str,
@@ -43,6 +47,7 @@ fn highlight_code_part(
 
     for ch in code_part.chars() {
         if in_string {
+            // If we're inside a string, keep adding characters until we find the closing delimiter
             current_token.push(ch);
 
             if ch == string_start {
@@ -51,6 +56,7 @@ fn highlight_code_part(
                 in_string = false;
             }
         } else if language.string_delimiters().contains(&ch) {
+            // If we find a string delimiter, start a new string token
             if !current_token.is_empty() {
                 colored_line.push_str(&color_token(
                     &current_token,
@@ -74,9 +80,12 @@ fn highlight_code_part(
             string_start = ch;
         } else if ch.is_alphanumeric() || ch == '_' || (language_name == "javascript" && ch == '$')
         {
+            // If the character is alphanumeric or an underscore, add it to the current token
             current_token.push(ch);
         } else {
+            // If we encounter any other character, it's the end boundary
             if !current_token.is_empty() {
+                // now with a complete token, categorize and color it
                 colored_line.push_str(&color_token(
                     &current_token,
                     &categorize_token(
@@ -94,6 +103,7 @@ fn highlight_code_part(
                 current_token.clear();
             }
 
+            // Handle the current character (whitespace, operator, etc.)
             if ch.is_whitespace() {
                 colored_line.push(ch);
             } else {
@@ -115,6 +125,7 @@ fn highlight_code_part(
         }
     }
 
+    // Handle any remaining token at the end of the line
     if !current_token.is_empty() {
         colored_line.push_str(&color_token(
             &current_token,
@@ -146,6 +157,7 @@ fn categorize_token(
     annotations: &HashSet<&str>,
     preprocessor_directives: &HashSet<&str>,
 ) -> String {
+    // Check the token against various categories defined by the language
     if keywords.contains(token) {
         "keyword".to_string()
     } else if operators.contains(token) {
@@ -183,6 +195,7 @@ fn categorize_token(
             "variable".to_string()
         }
     } else {
+        // "_", Default category for anything not specifically categorized
         "default".to_string()
     }
 }

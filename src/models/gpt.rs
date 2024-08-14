@@ -1,5 +1,7 @@
 // src/models/gpt.rs
 
+// this is a module that contains the implementation of the GPT model.
+
 use crate::models::AIModel;
 use crate::syntax_highlighter::highlight_code_blocks;
 use async_trait::async_trait;
@@ -11,6 +13,7 @@ pub struct GPT {
     conversation_history: Vec<serde_json::Value>,
 }
 
+// Implement (Rust trait that defines behavior) the AIModel trait for GPT
 impl GPT {
     pub fn new() -> Self {
         GPT {
@@ -30,9 +33,11 @@ impl AIModel for GPT {
     ) -> Result<String, Box<dyn std::error::Error>> {
         dotenv::dotenv().ok();
 
+        // Get the OpenAI API key from the environment variables
         let api_key = env::var("OPENAI_API_KEY")
             .map_err(|_| "OPENAI_API_KEY not set. Please check your .env file.")?;
 
+        // Create a new reqwest client and set the headers
         let client = reqwest::Client::new();
         let mut headers = HeaderMap::new();
 
@@ -54,6 +59,7 @@ impl AIModel for GPT {
             "max_tokens": 1000
         });
 
+        // Send a POST request to the OpenAI API
         let response = client
             .post("https://api.openai.com/v1/chat/completions")
             .headers(headers)
@@ -61,6 +67,7 @@ impl AIModel for GPT {
             .send()
             .await?;
 
+        // Parse the response from the API, extract the content of the response using serde_json
         let response_text = response.text().await?;
         let response_body: serde_json::Value = serde_json::from_str(&response_text)?;
 

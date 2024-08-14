@@ -1,5 +1,8 @@
 // src/text_formatter.rs
 
+// this is a module that contains functions for formatting text output. 
+// It is only used to color very specific elements of the responses of the AI models, such as the response header, error messages, and ordered lists.
+
 use ansi_term::Colour;
 use regex::Regex;
 

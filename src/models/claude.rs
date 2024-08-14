@@ -1,5 +1,7 @@
 // src/models/claude.rs
 
+// claude doesn't have a reliable free-tier API, so this code is for demonstration purposes only.
+
 use crate::models::AIModel;
 use async_trait::async_trait;
 use dotenv::dotenv;
